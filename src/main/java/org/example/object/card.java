@@ -9,7 +9,7 @@ public class card {
     private int num_card;
     private int nbr_Taureau;
     public static List<card> cartes = new ArrayList<>();
-    card(int n,int num){
+    public card(int n, int num){
         num_card=n;
         nbr_Taureau=num;
     }

@@ -6,15 +6,14 @@ import java.util.*;
 
 import static org.example.object.card.cartes;
 
-public class Method {
 
-    static List<card>[][] rangees = new List<card>[4][9];
+public class Method {
+    static Scanner sc = new Scanner(System.in);
     public static int nbr_joueur;
+    static card[][] rangees ;
+
     public static List<card> main;
     static List<List<card>> joueurs = new ArrayList<>();
-    Method(int n){
-        nbr_joueur=n;
-    }
     public static void regle(){
         method.printTitle("Regle du jeu :");
         System.out.println(
@@ -40,7 +39,7 @@ public class Method {
     }
 
     public static void start(){
-        Scanner sc = new Scanner(System.in);
+
         Random random = new Random();
         card.cart();
         // Mélanger les cartes
@@ -60,7 +59,7 @@ public class Method {
                 cartes.remove(cartes.get(0));
                 show(i);
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -80,36 +79,116 @@ public class Method {
             System.out.println(" num Carte : " + joueurs.get(i).get(j).getNum_card() + "          nbr taureau : " + joueurs.get(i).get(j).getNbr_Taureau());
         }
     }
+    public static void Initplateau() {
+        rangees = new card[6][nbr_joueur];
+        for (int i = 0; i <= rangees.length-1; i++) {
+            for (int j = 0; j <= rangees[i].length-1; j++) {
+                rangees[i][j] = new card(0, 0);
+            }
+        }
+    }
+    public static void plateau(){
+        String plateau="";
+        method.enterContinue();
+        method.clearConsole();
+        method.printLine(50);
+        System.out.println("Pile de carte :");
+        int code=0;
+        for (int i =0;i<=rangees.length-1;i++){
+            String top = " ";
+            String middle = "";
+            String bottom = "";
+            code=0;
+            for (int j = 0; j<=rangees[i].length-1; j++){
+
+                if (rangees[i][j].getNum_card()==0){
+                    code+=1;
+                    top += "   |    col " + (j+1) + "    |";
+                    middle += "       | num " + rangees[i][j].getNum_card() + " |";
+                    bottom += "       | tau " + rangees[i][j].getNbr_Taureau() + " |  ";
+                }
+                else {
+                    top += "   |    col " + (j+1) + "    |";
+                    middle += "       | num " + rangees[i][j].getNum_card() + " |";
+                    bottom += "       | tau " + rangees[i][j].getNbr_Taureau() + " |  ";
+                }
+
+            }
+            if (code==nbr_joueur){
+                break;
+            }
+            else {
+                String line = top + "\n" + middle + "\n" + bottom;
+                plateau += "\n\n\n" + line;
+            }
+        }
+        System.out.println(plateau);
+        method.printLine(50);
+        method.enterContinue();
+        method.clearConsole();
+    }
+    public static void init(){
+        Initplateau();
+        for (int i =0;i<nbr_joueur;i++){
+            System.out.print("Joueur " + (i+1) + ", choisissez une carte : ");
+            int choice = method.scInt("->",joueurs.get(i).size());
+            rangees [0][i]=joueurs.get(i).get(choice-1);
+            String plateau = "";
+            for (int j = 1;j<=i+1;j++){
+                plateau += " [?] ";
+            }
+            System.out.println(plateau);
+            joueurs.get(i).remove(joueurs.get(i).get(choice-1));
+
+        }
+        plateau();
+    }
+    public static int lastcol(int i){
+        int lastcol=5;
+        while( rangees[lastcol][i].getNum_card()==0){
+            lastcol-=1;
+        }
+        return lastcol;
+    }
+    public static void game(){
+        for (int i = 0; i < nbr_joueur; i++) {
+            int choix;
+            show(i);
+            System.out.print("Joueur " + (i+1) + ", choisissez une carte : ");
+            choix = method.scInt("->",joueurs.get(i).size()-1);
+            int indexRangee = 0;
+            int lastcol;
+            int indexLastcol=lastcol(0);
+                for (int k = 1; k < nbr_joueur; k++) {
+                    lastcol = lastcol(k);
+                    if ((rangees[lastcol][k].getNum_card() < rangees[indexLastcol][indexRangee].getNum_card()) && (rangees[lastcol][k].getNum_card() < joueurs.get(i).get(choix-1).getNum_card())) {
+                        indexRangee = k;
+                        indexLastcol=lastcol;
+                    }
+                }
+            rangees[indexLastcol+1][indexRangee] = joueurs.get(i).get(choix-1);
+            joueurs.get(i).remove(joueurs.get(i).get(choix-1));
+            plateau();
+            System.out.println();
+        }
+
+    }
     public static void GameLogic(){
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
         // Jouer au  jeu
         System.out.println();
+        init();
+        game();
 
-        for (int i = 0; i < nbr_joueur; i++) {
-            int choix;
-            System.out.print("Joueur " + (i+1) + ", choisissez une carte : ");
-            choix = method.scInt("->",joueurs.get(i).size());
-            int indexRangee = 0;
-            for (int j = 1; j < 4; j++) {
-                if (rangees[j][rangees[i].length] < rangees[indexRangee][rangees[i]] && rangees[j][5] < choix) {
-                    indexRangee = j;
-                }
-            }
-            rangees[indexRangee][rangees.length+1] = choix;
-            joueurs.get(i).remove(Integer.valueOf(choix));
-            System.out.println("Carte choisie : " + choix);
-            System.out.println("Rangees : " + Arrays.toString(rangees));
-            System.out.println();
-        }
 
         // Calculer les points
         int[] points = new int[4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 10; j++) {
-                int difference = Math.abs(joueurs.get(i).get(j).getNbr_Taureau() - rangees[0][j]);
+                int difference = Math.abs(joueurs.get(i).get(j).getNbr_Taureau() - rangees[0][j].getNbr_Taureau());
                 for (int k = 1; k < 4; k++) {
-                    int nouvelleDifference = Math.abs(joueurs.get(i).get(j).getNbr_Taureau() - rangees[k][j]);
+                    int nouvelleDifference = Math.abs(joueurs.get(i).get(j).getNbr_Taureau() - rangees[k][j].getNbr_Taureau());
                     if (nouvelleDifference < difference) {
                         difference = nouvelleDifference;
                     }
