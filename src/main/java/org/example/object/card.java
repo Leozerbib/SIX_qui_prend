@@ -9,6 +9,7 @@ public class card {
     private int num_card;
     private int nbr_Taureau;
     public static List<card> cartes = new ArrayList<>();
+    public static List<card> Allcarte = new ArrayList<>();
     public card(int n, int num){
         num_card=n;
         nbr_Taureau=num;
@@ -33,8 +34,11 @@ public class card {
         for (int i = 1; i <= 104; i++) {
             card card = new card(0, 0);
             cartes.add(card);
+            Allcarte.add(card);
             cartes.get(i-1).num_card=i;
+            Allcarte.get(i-1).num_card=i;
             taureau(cartes.get(i-1).num_card,i);
+            taureau(Allcarte.get(i-1).num_card,i);
         }
 
         return cartes;

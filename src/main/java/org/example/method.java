@@ -18,6 +18,7 @@ public class method {
 
 
     }
+
     public static int scInt(String prompt, int userChoice){
         int input = 0;
         do{
