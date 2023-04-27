@@ -1,8 +1,7 @@
 package org.example;
 import java.util.*;
 import org.example.mechanic.Method;
-
-
+import org.example.mechanic.Start;
 
 
 public class Main {
@@ -10,9 +9,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
 
-        Method.regle();
-        Method.start();
-        Method.GameLogic();
+        Start.regle();
+        Start.start();
+        Start.GameLogic();
 
     }
 }

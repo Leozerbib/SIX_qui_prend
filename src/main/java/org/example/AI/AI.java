@@ -1,56 +1,71 @@
 package org.example.AI;
 
-import org.example.method;
+import org.example.joueurs.joueurs;
 import org.example.object.card;
 
 import java.util.*;
 
 import static org.example.mechanic.Method.*;
 import static org.example.object.card.Allcarte;
-import static org.example.object.card.cartes;
 
 public class AI {
-    Random random = new Random();
-    private static int SaveMouv;
+    static Random random = new Random();
+    private static int Save;
     private static int Savecol;
-    private static int profondeur;
-    private static float victoire;
-    private static float defaite;
-    private static float nul;
     public static card[][] rangeesV ;
-    public static List<card> ordi = new ArrayList<>();
+    public static List<card> ordimain = new ArrayList<>();
+    public static List<card> ordibin = new ArrayList<>();
+    public static List<card> ordimainV = new ArrayList<>();
+    public static List<card> ordibinV = new ArrayList<>();
     public static List<card> SaveCard = new ArrayList<>();
     public static List<Integer> Savemouv = new ArrayList<>();
-    private static List<List<card>> joueursV = new ArrayList<>();
-    private static List<List<card>> joueursPliV = new ArrayList<>();
+    public static List<card> binV = new ArrayList<>();
+    public static List<List<card>> joueursPliV = new ArrayList<>();
     private static List<Integer> ScoreV = new ArrayList<>();
+    private static int l;
+    public static void makeListIdentical(card[][] list1, card[][] list2) {
+        for (int i = 0; i < list1.length; i++) {
+            for (int j = 0; j < list1[0].length; j++) {
+                list1[i][j] = list2[i][j];
+            }
+        }
+    }
+    public static void arbre(int profondeur){
 
-
-    public static int arbre(int profondeur){
-        SaveCard.clear();
         Savemouv.add(0);
         Savemouv.add(0);
         Savemouv.add(50);
+
+
             for(int i =0;i<profondeur;i++){
+                makeListIdentical(rangeesV,rangees);
+                ordimainV.addAll(ordimain);
+                ordibinV.addAll(ordibin);
                 chooseMin(GameLogicAI());
+                ordibinV.clear();
+                binV.clear();
+                Allcarte.addAll(SaveCard);
+                SaveCard.clear();
+                System.out.println(ordimain.size());
             }
-        Allcarte.addAll(SaveCard);
-        return Savemouv.get(0);
+
     }
     public static void carteRest(){
-        for (int i = 0; i<ordi.size();i++){
-            Allcarte.remove(ordi.get(i));
-        }
+        List<card> main = ordimain;
+        Allcarte.removeAll(main);
+
     }
     public static int GameLogicAI(){
-        rangeesV=rangees;
-        while(joueurs.get(nbr_joueur-1).size()>0){
-            gameV();
+        l=0;
+        while(ordimainV.size()>0){
+
+            gameV(l);
+            l+=1;
         }
         ScoreV.clear();
         int pointV = 0;
-        for (int j = 0; j<joueursPliV.get(nbr_joueur-1).size();j++){
-            pointV += joueursPliV.get(nbr_joueur-1).get(j).getNbr_Taureau();
+        for (int j = 0; j<joueursPliV.get(joueurs.joueurs.size()-1).size();j++){
+            pointV += joueursPliV.get(joueurs.joueurs.size()-1).get(j).getNbr_Taureau();
         }
         return pointV;
     }
@@ -58,7 +73,7 @@ public class AI {
         int min = Savemouv.get(2);
         if(point<min){
             Savemouv.clear();
-            Savemouv.add(SaveMouv);
+            Savemouv.add(Save);
             Savemouv.add(Savecol);
             Savemouv.add(point);
 
@@ -75,7 +90,7 @@ public class AI {
     }
     public static boolean verifV(card Cardplay,int choix){
         for (int k = 0; k < 4; k++) {
-            int indexLastcol=lastcol(k);
+            int indexLastcol=lastcolV(k);
             if (Cardplay.getNum_card() > rangeesV[indexLastcol][k].getNum_card()) {
                 return true;
             }
@@ -117,34 +132,56 @@ public class AI {
         rangeesV[0][j]=cardPlay;
 
     }
-    public static void gameV(){
+    public static void gameV(int l){
 
-        int randomInput= (int) (Allcarte.size()/0.75);
-        int randomInputCol= (int) Math.random()*4;
-        int randomInputAI= (int) Math.random()*ordi.size();
-        int l=0;
-        while (l==0){
-            SaveMouv = randomInputAI;
-            Savecol = randomInputCol;
-            l+=1;
+        int randomInput= (int) (Allcarte.size()*0.75);
+        int randomInputCol= random.nextInt(4);
+        int randomInputAI;
+        if (ordimainV.size()!=1) {
+             randomInputAI= random.nextInt(ordimainV.size()-1);
         }
-        for (int i = 0; i < nbr_joueur-1; i++) {
-            if (verifV(Allcarte.get(randomInput), randomInput) == true){
-                turnV(i,Allcarte.get(randomInput));
+        else {
+            randomInputAI=0;
+        }
+        if(l==0){
+            Save = randomInputAI;
+            Savecol = randomInputCol;
+            if (verifV(ordimainV.get(randomInputAI), randomInputAI) == true){
+                turnV(joueurs.joueurs.size()-1,joueurs.joueurs.get(joueurs.joueurs.size()-1).get(randomInputAI));
+                ordimainV.remove(randomInputAI);
             }
             else{
-                rammasserV(i,randomInputCol-1,Allcarte.get(randomInputCol - 1));
-                SaveCard.add(Allcarte.get(randomInputCol - 1));
-                Allcarte.remove(Allcarte.get(randomInputCol - 1));
+                rammasserV(joueurs.joueurs.size()-1,randomInputCol,ordimainV.get(randomInputAI));
+                ordimainV.remove(randomInputAI);
+
+            }
+
+        }
+
+
+        for (int i = 0; i < joueurs.joueurs.size()-1; i++) {
+            if (verifV(Allcarte.get(randomInput), randomInput) == true) {
+                turnV(i, Allcarte.get(randomInput));
+                SaveCard.add(Allcarte.get(randomInput));
+                Allcarte.remove(randomInput);
+
+            } else {
+                rammasserV(i, randomInputCol, Allcarte.get(randomInput));
+                SaveCard.add(Allcarte.get(randomInput));
+                Allcarte.remove(randomInput);
 
 
             }
         }
-        if (verifV(joueurs.get(nbr_joueur-1).get(randomInputAI), randomInputAI) == true){
-            turnV(nbr_joueur-1,joueurs.get(nbr_joueur-1).get(randomInputAI));
+        if (verifV(ordimainV.get(randomInputAI), randomInputAI) == true){
+            turnV(joueurs.joueurs.size()-1,joueurs.joueurs.get(joueurs.joueurs.size()-1).get(randomInputAI));
+            ordimainV.remove(randomInputAI);
         }
         else{
-            rammasserV(nbr_joueur-1,randomInputCol-1,joueurs.get(nbr_joueur-1).get(randomInputCol - 1));
+            rammasserV(joueurs.joueurs.size()-1,randomInputCol,ordimainV.get(randomInputAI));
+            ordimainV.remove(randomInputAI);
+
         }
+
     }
 }

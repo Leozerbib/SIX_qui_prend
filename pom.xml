@@ -13,5 +13,12 @@
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>user.java.lang</groupId>
+            <artifactId>user.java.lang</artifactId>
+            <version>2020.164.33984</version>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -9,6 +9,7 @@ public class card {
     private int num_card;
     private int nbr_Taureau;
     public static List<card> cartes = new ArrayList<>();
+    public static List<card> AllcarteV = new ArrayList<>();
     public static List<card> Allcarte = new ArrayList<>();
     public card(int n, int num){
         num_card=n;
