@@ -55,7 +55,13 @@ public class Method {
     }
     public static void plateau(){
         String plateau="";
-        method.enterContinue();
+
+
+
+
+
+
+
         method.clearConsole();
         method.printLine(50);
         System.out.println("Pile de carte :");

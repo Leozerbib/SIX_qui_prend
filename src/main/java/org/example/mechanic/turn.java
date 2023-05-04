@@ -21,9 +21,7 @@ public class turn {
     public static boolean verif(int i,int choix){
         for (int k = 0; k < 4; k++) {
             int indexLastcol=lastcol(k);
-
-
-             {
+            if (joueurs.get(i).get(choix).getNum_card() > rangees[indexLastcol][k].getNum_card()) {
                 return true;
             }
         }
@@ -37,8 +35,8 @@ public class turn {
 
         for (int k = 1; k < 4; k++) {
             lastcol = lastcol(k);
-            if ((joueurs.get(i).get(choix - 1).getNum_card() > rangees[indexLastcol][indexRangee].getNum_card())) {
-                if ((rangees[lastcol][k].getNum_card() > rangees[indexLastcol][indexRangee].getNum_card()) && (rangees[lastcol][k].getNum_card() < joueurs.get(i).get(choix - 1).getNum_card())) {
+            if ((joueurs.get(i).get(choix).getNum_card() > rangees[indexLastcol][indexRangee].getNum_card())) {
+                if ((rangees[lastcol][k].getNum_card() > rangees[indexLastcol][indexRangee].getNum_card()) && (rangees[lastcol][k].getNum_card() < joueurs.get(i).get(choix).getNum_card())) {
                     indexRangee = k;
                     indexLastcol = lastcol;
                 }
@@ -50,15 +48,12 @@ public class turn {
             }
         }
         if (indexLastcol==4){
-            rammasser(i,indexRangee,joueurs.get(i).get(choix - 1));
+            rammasser(i,indexRangee,joueurs.get(i).get(choix));
         }
         else {
-            rangees[indexLastcol+1][indexRangee] = joueurs.get(i).get(choix-1);
+            rangees[indexLastcol+1][indexRangee] = joueurs.get(i).get(choix);
         }
-        Allcarte.remove(joueurs.get(i).get(choix-1));
-        joueurs.get(i).remove(joueurs.get(i).get(choix-1));
-        plateau();
-        System.out.println();
+        joueurs.get(i).remove(joueurs.get(i).get(choix));
     }
     public static void rammasser(int i, int j, card cardPlay){
         int indexLastcol=lastcol(j);
@@ -77,15 +72,18 @@ public class turn {
                 int choix2;
                 show(i);
                 System.out.print("Joueur " + (i+1) + ", choisissez une carte : ");
-                choix = method.scInt("->",joueurs.get(i).size());
+                choix = method.scInt("->",joueurs.get(i).size())-1;
                 if (verif(i, choix) == true){
+                    Allcarte.remove(joueurs.get(i).get(choix));
                     turn(i,choix);
                 }
                 else{
                     System.out.print("Joueur " + (i+1) + ", choisissez une colonne : ");
-                    choix2 = method.scInt("->",4);
-                    rammasser(i,choix2-1,joueurs.get(i).get(choix - 1));
-                    joueurs.get(i).remove(joueurs.get(i).get(choix-1));
+                    choix2 = method.scInt("->",4)-1;
+                    rammasser(i,choix2,joueurs.get(i).get(choix));
+                    Allcarte.remove(joueurs.get(i).get(choix));
+                    joueurs.get(i).remove(joueurs.get(i).get(choix));
+
 
                 }
             }
@@ -93,13 +91,13 @@ public class turn {
                 AI.arbre(50);
                 int random =AI.Savemouv.get(0);
                 int randomcol=AI.Savemouv.get(1);
+                AI.Savemouv.clear();
                 if (verif(i, random) == true) {
                     turn(i, random);
                 } else {
                     rammasser(i, randomcol, joueurs.get(i).get(random));
                     joueurs.get(i).remove(joueurs.get(i).get(random));
                 }
-                System.out.println("bonjour");
             }
         }
 

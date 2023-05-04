@@ -42,13 +42,13 @@ public class AI {
                 ordimainV.addAll(ordimain);
                 ordibinV.addAll(ordibin);
                 chooseMin(GameLogicAI());
+
                 ordibinV.clear();
                 binV.clear();
                 Allcarte.addAll(SaveCard);
                 SaveCard.clear();
-                System.out.println(ordimain.size());
-            }
 
+            }
     }
     public static void carteRest(){
         List<card> main = ordimain;
@@ -146,20 +146,20 @@ public class AI {
         if(l==0){
             Save = randomInputAI;
             Savecol = randomInputCol;
-            if (verifV(ordimainV.get(randomInputAI), randomInputAI) == true){
-                turnV(joueurs.joueurs.size()-1,joueurs.joueurs.get(joueurs.joueurs.size()-1).get(randomInputAI));
-                ordimainV.remove(randomInputAI);
-            }
-            else{
-                rammasserV(joueurs.joueurs.size()-1,randomInputCol,ordimainV.get(randomInputAI));
-                ordimainV.remove(randomInputAI);
-
-            }
+        }
+        if (verifV(ordimainV.get(randomInputAI), randomInputAI) == true){
+            turnV(joueurs.joueurs.size()-1,joueurs.joueurs.get(joueurs.joueurs.size()-1).get(randomInputAI));
+            ordimainV.remove(randomInputAI);
+        }
+        else{
+            rammasserV(joueurs.joueurs.size()-1,randomInputCol,ordimainV.get(randomInputAI));
+            ordimainV.remove(randomInputAI);
 
         }
 
 
         for (int i = 0; i < joueurs.joueurs.size()-1; i++) {
+            System.out.println(Allcarte.size());
             if (verifV(Allcarte.get(randomInput), randomInput) == true) {
                 turnV(i, Allcarte.get(randomInput));
                 SaveCard.add(Allcarte.get(randomInput));
@@ -173,15 +173,7 @@ public class AI {
 
             }
         }
-        if (verifV(ordimainV.get(randomInputAI), randomInputAI) == true){
-            turnV(joueurs.joueurs.size()-1,joueurs.joueurs.get(joueurs.joueurs.size()-1).get(randomInputAI));
-            ordimainV.remove(randomInputAI);
-        }
-        else{
-            rammasserV(joueurs.joueurs.size()-1,randomInputCol,ordimainV.get(randomInputAI));
-            ordimainV.remove(randomInputAI);
 
-        }
 
     }
 }
